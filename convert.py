@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import h5py
 import numpy as np
 import sys
 
@@ -33,7 +34,15 @@ for i, l in enumerate(f):
     b = int(b)
     min_bin = min(min_bin, b)
     max_bin = max(max_bin, b)
-    print(i, flux)
     arr[i] = float(flux)
 
 f.close()
+
+n_pulses = int(n_lines / (max_bin + 1))
+
+arr = arr.reshape((n_pulses, max_bin + 1))
+
+h_file = h5py.File(sys.argv[1] + '.h5', 'w')
+h_file.create_dataset('data', data=arr)
+h_file.close()
+print('File saved as ' + sys.argv[1] + '.h5')
